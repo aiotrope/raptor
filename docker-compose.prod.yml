@@ -1,3 +1,5 @@
+version: '3.9'
+
 services:
   database:
     container_name: database-server
@@ -17,17 +19,13 @@ services:
     command: -connectRetries=60 -baselineOnMigrate=true migrate
     env_file:
       - project.env
-    profiles:
-      - migrate
-  
+
   pgadmin:
     image: dpage/pgadmin4:6.20
     env_file:
       - project.env
     depends_on:
       - database
-    profiles:
-      - pgadmin
 
   redis:
     image: redis:latest
@@ -55,9 +53,9 @@ services:
       replicas: 2
       restart_policy:
         condition: on-failure
-        delay: "5s"
+        delay: '5s'
         max_attempts: 5
-        window: "30s"
+        window: '30s'
 
   nginx:
     image: nginx:latest
@@ -81,10 +79,9 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
-        delay: "5s"
+        delay: '5s'
         max_attempts: 5
-        window: "30s"
-
+        window: '30s'
 
 volumes:
   astro_node_modules:
