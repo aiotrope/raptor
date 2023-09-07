@@ -1,0 +1,9 @@
+---
+export const prerender = true;
+import Layout from '../layouts/Layout.astro';
+import Todos from '../components/Todos.svelte';
+---
+
+<Layout title="Main page">
+  <Todos pageTitle="Main page" client:load />
+</Layout>
