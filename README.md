@@ -5,16 +5,19 @@ DBSWA: Dev & Production Configuration
 ## CLI Commands
 
 ```bash
-# start app at the root directory; application running on port 7800 (production); first run
-$ cd raptor && docker compose -f docker-compose.prod.yml -d
+# buid/rebuild && start docker images based on docker-compose on prod mode; running on port 7800
+$ cd raptor && docker compose -f docker-compose.prod.yml up -d
 
-# start app at the root directory; application running on port 7800 (dev)
+# buid/rebuild && start docker images based on docker-compose on debug mode;
+$ docker compose up --build
+
+# start running images debug mode at port 7800
 $ cd raptor && docker compose up 
 
-# stop running app
+# stop running app all modes
 $ docker compose down
 
-# start app on succeeding run 
-$ docker compose up
+# clean slate docker hub
+$ docker system prune -a && docker images prune -a && docker volume rm $(docker volume ls -q) && docker volume prune -a
 
 ```

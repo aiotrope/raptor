@@ -7,13 +7,18 @@ services:
     restart: unless-stopped
     volumes:
       - ./production-database-data:/var/lib/postgresql/data
+    networks:
+      - backnet
     env_file:
       - project.env
 
   flyway:
     image: flyway/flyway:9.11.0-alpine
+    restart: unless-stopped
     depends_on:
       - database
+    networks:
+      - backnet
     volumes:
       - ./flyway/sql/:/flyway/sql
     command: -connectRetries=60 -baselineOnMigrate=true migrate
@@ -22,16 +27,22 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:6.20
+    restart: unless-stopped
     env_file:
       - project.env
+    networks:
+      - backnet
     depends_on:
       - database
 
   redis:
     image: redis:latest
+    restart: unless-stopped
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - backnet
     expose:
       - 6379
 
@@ -49,6 +60,9 @@ services:
       - redis
     env_file:
       - project.env
+    networks:
+      - backnet
+      - frontnet
     deploy:
       replicas: 2
       restart_policy:
@@ -59,12 +73,16 @@ services:
 
   nginx:
     image: nginx:latest
+    restart: unless-stopped
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       - todo-api
     ports:
       - 7800:7800
+    networks:
+      - backnet
+      - frontnet
 
   todo-ui:
     build:
@@ -76,6 +94,9 @@ services:
       - 3000:80
     depends_on:
       - todo-api
+    networks:
+      - backnet
+      - frontnet
     deploy:
       restart_policy:
         condition: on-failure
@@ -85,3 +106,7 @@ services:
 
 volumes:
   astro_node_modules:
+
+networks:
+  backnet:
+  frontnet:
